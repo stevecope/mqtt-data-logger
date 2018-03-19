@@ -15,6 +15,7 @@ import classes.mlogger as mlogger
 import threading
 from queue import Queue
 from .callbacks import *
+from .command import command_input
 
 q=Queue()
 #from mqtt_functions import *
