@@ -3,6 +3,9 @@
 ##email steve@steves-internet-guide.com
 ###Free to use for any purpose
 
+#THIS FILE DEFINES THE CALLBACKS AND THEN
+#INITIALIZES THE MQTT CLIENT OBJECT
+
 #callbacks -all others define in functions module
 def on_connect(client, userdata, flags, rc):
     logging.debug("Connected flags"+str(flags)+"result code "\
@@ -49,3 +52,14 @@ def has_changed(topic,msg):
             return False
     last_message[topic]=msg
     return True
+
+def Initialise_clients(cname,cleansession=True):
+    #flags set
+    client= mqtt.Client(cname)
+    if mqttclient_log: #enable mqqt client logging
+        client.on_log=on_log
+    client.on_connect= on_connect        #attach function to callback
+    client.on_message=on_message        #attach function to callback
+    client.on_disconnect=on_disconnect
+    client.on_subscribe=on_subscribe
+    return client

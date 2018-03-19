@@ -20,31 +20,9 @@ from .config import *
 from .utilities import convert, print_out, log_worker
 
 q=Queue()
-#from mqtt_functions import *
 
+# MAIN PROGRAM
 
-
-
-
-
-def Initialise_clients(cname,cleansession=True):
-    #flags set
-    client= mqtt.Client(cname)
-    if mqttclient_log: #enable mqqt client logging
-        client.on_log=on_log
-    client.on_connect= on_connect        #attach function to callback
-    client.on_message=on_message        #attach function to callback
-    client.on_disconnect=on_disconnect
-    client.on_subscribe=on_subscribe
-    return client
-###
-
-
-
-
-
-
-########################main program
 if __name__ == "__main__" and len(sys.argv)>=2:
     command_input(options)
     pass
@@ -56,7 +34,6 @@ if not options["cname"]:
     cname="logger-"+str(r)
 else:
     cname="logger-"+str(options["cname"])
-
 
 
 #log=mlogger.m_logger(log_dir,log_recs,number_logs)
@@ -105,6 +82,7 @@ except KeyboardInterrupt:
 
 client.loop_stop()  #final check for messages
 time.sleep(5)
+
 Log_worker_flag=False #stop logging thread
 print("ending ")
 
