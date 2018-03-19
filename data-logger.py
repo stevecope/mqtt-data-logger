@@ -16,55 +16,15 @@ import threading
 from queue import Queue
 from .callbacks import *
 from .command import command_input
+from .config import *
+from .utilities import convert, print_out, log_worker
 
 q=Queue()
 #from mqtt_functions import *
 
-##### User configurable data section
-username=""
-password=""
-verbose=False #True to display all messages, False to display only changed
-messages
-mqttclient_log=False #MQTT client logs showing messages
-logging.basicConfig(level=logging.INFO) #error logging
-#use DEBUG,INFO,WARNING
-####
-options=dict()
-
-##EDIT HERE ###############
-brokers=["192.168.1.157","192.168.1.186","192.168.1.206","192.168.1.185",\
-         "test.mosquitto.org","broker.hivemq.com","iot.eclipse.org"]
-options["broker"]=brokers[4]
-options["port"]=1883
-options["verbose"]=True
-options["cname"]=""
-options["topics"]=[("$SYS/#",0)]
-options["topics"]=[("bbc/#",0),("homeautomation",0),("/HomeCtrl",0),\
-                   ("/hometest",0)]
-options["topics"]=[("steves-house/#",0)]
-###
-cname=""
-sub_flag=""
-timeout=60
-messages=dict()
-last_message=dict()
 
 
 
-
-def log_worker():
-    """runs in own thread to log data"""
-    while Log_worker_flag:
-        while not q.empty():
-            results = q.get()
-            if results is None:
-                continue
-            log.log_json(results)
-            #print("message saved ",results["message"])
-    log.close_file()
-
-########################
-####
 
 
 def Initialise_clients(cname,cleansession=True):
@@ -81,21 +41,14 @@ def Initialise_clients(cname,cleansession=True):
 
 
 
-###########
-def convert(t):
-    d=""
-    for c in t:  # replace all chars outside BMP with a !
-            d =d+(c if ord(c) < 0x10000 else '!')
-    return(d)
-def print_out(m):
-    if display:
-        print(m)
+
 
 
 ########################main program
 if __name__ == "__main__" and len(sys.argv)>=2:
     command_input(options)
     pass
+
 verbose=options["verbose"]
 
 if not options["cname"]:
@@ -118,27 +71,30 @@ logging.info("creating client"+cname)
 client=Initialise_clients(cname,False)#create and initialise client object
 topics=options["topics"]
 broker=options["broker"]
-port=1883
-keepalive=60
+
 print("starting")
 ##
 t = threading.Thread(target=log_worker) #start logger
 Log_worker_flag=True
 t.start() #start logging thread
 ###
+
 client.connected_flag=False # flag for connection
 client.bad_connection_flag=False
 client.subscribed_flag=False
 client.loop_start()
 client.connect(broker,port)
+
 while not client.connected_flag: #wait for connection
     time.sleep(1)
     print("waiting")
+
 client.subscribe(topics)
 while not client.subscribed_flag: #wait for connection
     time.sleep(1)
     print("waiting for subscribe")
 print("subscribed ",topics)
+
 #loop and wait until interrupted
 try:
     while True:
