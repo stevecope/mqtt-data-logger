@@ -1,0 +1,61 @@
+# This is the repository-wide ignore file. Suffixes below are ignored
+# i.e. committing not allowed.
+
+
+#The ZODB Data files
+data
+
+Data.fs
+Data.fs.lock
+Data.fs.tmp
+uwsgi.log
+uwsgi.pid
+
+# buildout junk
+.installed.cfg
+.mr.developer.cfg
+bin
+cache
+checkouts
+deploy.ini
+develop-eggs
+include
+lib
+local
+parts
+
+# archives
+*.tar
+*.tar.gz
+*.tar.bz2
+*.zip
+
+# editors
+*.swp
+*.elc
+*.el
+*~
+*\#*\#
+
+# python
+*.pyc
+*.pyo
+*.bdf
+*.bak
+build/
+dist/
+
+# miscellaneous
+*.orig
+*.ori
+*.old
+*.svn
+*.rej
+*.egg-info
+
+# project specific
+config.json
+eggs/
+jwt.key
+pip-selfcheck.json
+share/
