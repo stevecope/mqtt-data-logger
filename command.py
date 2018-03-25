@@ -3,19 +3,37 @@
 ###demo code provided by Steve Cope at www.steves-internet-guide.com
 ##email steve@steves-internet-guide.com
 ###Free to use for any purpose
+import sys, getopt
+options=dict()
+
+##EDIT HERE ###############
+options["username"]=""
+options["password"]=""
+options["broker"]="127.0.0.1"
+options["port"]=1883
+options["verbose"]=True
+options["cname"]=""
+options["topics"]=[("",0)]
+options["storechangesonly"]=True
+options["keepalive"]=60
+options["loglevel"]="WARNING"
+options["log_dir"]="mlogs"
+options["log_records"]=1000
+options["number_logs"]=0
+
 
 def command_input(options={}):
     topics_in=[]
     qos_in=[]
 
-    valid_options=" -b <broker> -p <port>-t <topic> -q QOS -v <verbose> -h
-<help>\
+    valid_options=" -b <broker> -p <port>-t <topic> -q QOS -v <verbose> -h <help>\
 -c <loop Time secs -d logging debug  -n Client ID or Name\
--i loop Interval -u Username -P Password\
-"
+-i loop Interval -u Username -P Password -s <store all data>\
+-l <log directory default= mlogs> -r <number of records default=100>\
+-f <number of log files default= unlimited"
     print_options_flag=False
     try:
-      opts, args = getopt.getopt(sys.argv[1:],"hb:i:dk:p:t:q:l:vn:u:P:")
+      opts, args = getopt.getopt(sys.argv[1:],"h:b:i:sdk:p:t:q:l:vn:u:P:l:r:f:")
     except getopt.GetoptError:
       print (sys.argv[0],valid_options)
       sys.exit(2)
@@ -23,8 +41,7 @@ def command_input(options={}):
 
     for opt, arg in opts:
         if opt == '-h':
-            print (sys.argv[0],valid_options)
-            sys.exit()
+             options["broker"] = str(arg)
         elif opt == "-b":
              options["broker"] = str(arg)
         elif opt == "-i":
@@ -47,6 +64,14 @@ def command_input(options={}):
              options["username"] = str(arg)
         elif opt =="-v":
             options["verbose"]=True
+        elif opt =="-s":
+            options["storechangesonly"]=False
+        elif opt =="-l":
+            options["log_dir"]=str(arg)
+        elif opt =="-r":
+            options["log_records"]=int(arg)
+        elif opt =="-f":
+            options["number_logs"]=int(arg)
 
 
     lqos=len(qos_in)
@@ -58,3 +83,4 @@ def command_input(options={}):
 
     if topics_in:
         options["topics"]=topics_in #array with qos
+    return options
