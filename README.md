@@ -3,6 +3,7 @@ Simple Python MQTT Data Logger
 This software uses the Python logger to create a logfile
 for all messages for all topics to which this MQTT client
 has subscribed.
+The program is run from the command line
 You can subscribe to multiple topics.
 
 
