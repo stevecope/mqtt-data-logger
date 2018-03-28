@@ -26,14 +26,13 @@ def command_input(options={}):
     topics_in=[]
     qos_in=[]
 
-    valid_options=" -b <broker> -p <port>-t <topic> -q QOS -v <verbose> -h <help>\
--c <loop Time secs -d logging debug  -n Client ID or Name\
--i loop Interval -u Username -P Password -s <store all data>\
+    valid_options=" --help <help> -h or -b <broker> -p <port>-t <topic> -q QOS -v <verbose> -h <help>\
+ -d logging debug  -n Client ID or Name -u Username -P Password -s <store all data>\
 -l <log directory default= mlogs> -r <number of records default=100>\
 -f <number of log files default= unlimited"
     print_options_flag=False
     try:
-      opts, args = getopt.getopt(sys.argv[1:],"h:b:i:sdk:p:t:q:l:vn:u:P:l:r:f:")
+      opts, args = getopt.getopt(sys.argv[1:],"h:b:sdk:p:t:q:l:vn:u:P:l:r:f:")
     except getopt.GetoptError:
       print (sys.argv[0],valid_options)
       sys.exit(2)
@@ -44,8 +43,6 @@ def command_input(options={}):
              options["broker"] = str(arg)
         elif opt == "-b":
              options["broker"] = str(arg)
-        elif opt == "-i":
-             options["interval"] = int(arg)
         elif opt == "-k":
              options["keepalive"] = int(arg)
         elif opt =="-p":

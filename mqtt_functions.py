@@ -112,7 +112,7 @@ def run_loop(client,broker,port,topics,keepalive=60,loop_function=None,\
                 client.subscribe_flag=True
                 sub_count=0
                         
-            else:# try 3 times to subsribe then quit
+            else:# try 3 times to subscribe then quit
                 sub_count+=1;
                 if sub_count>3:
                     client.run_flag=False
