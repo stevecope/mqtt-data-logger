@@ -9,6 +9,7 @@
 import paho.mqtt.client as mqtt
 import logging,time,command
 def on_connect(client, userdata, flags, rc):
+
     logging.debug("Connected flags"+str(flags)+"result code "\
     +str(rc)+"client1_id")
     if rc==0:
@@ -89,7 +90,8 @@ def Initialise_clients(cname,mqttclient_log,cleansession=True):
 def run_loop(client,broker,port,topics,keepalive=60,loop_function=None,\
              loop_delay=1,run_forever=False):
     """runs a loop that will auto reconnect and subscribe to topics
-    pass topics as a list of tuples
+    pass topics as a list of tuples. You can pass a funcction to be
+    called at set intervals determined by the loop_delay
     """
     client.run_flag=True
     no_sub_flag=False
@@ -126,8 +128,8 @@ def run_loop(client,broker,port,topics,keepalive=60,loop_function=None,\
 #This function needs to run inside a loop
 def client_loop(client,broker,port=1883,topics="",\
                 keepalive=60,subscribe_flag=False,run_forever=False):
-    #handles connects and reconnects and subscribes need to be called
-    #inside a loop
+    """handles connects and reconnects and subscribes need to be called
+    inside a loop"""
     no_sub_flag=False
     if topics=="":
         no_sub_flag=True #don't try to subscribe
@@ -156,7 +158,7 @@ def client_loop(client,broker,port=1883,topics="",\
 
 
 def subscribe_topics(client,topics,qos=0):
-   #print("topic ",topics,"  ",qos)
+    """ Subscribes to topics and stores acknowledgements"""
    
    if type(topics) is not list: #topics should be list of tuples
       if type(topics) is not tuple: #topics isn't tuple?
@@ -182,6 +184,7 @@ def subscribe_topics(client,topics,qos=0):
    return r
          
 def check_subs(client):
+    """ Checks that all Subscriptions have been received"""
     wcount=0
     while wcount<10:
         for t in client.topic_ack:
@@ -201,7 +204,9 @@ def check_subs(client):
 
 def Connect(client,broker,port,keepalive,run_forever=False):
     """Attempts connection set delay to >1 to keep trying
-    but at longer intervals  """
+    but at longer intervals. If runforever flag is true then
+    it will keep trying to connect or reconnect indefinetly otherwise
+    gives up after 3 fialed attemps"""
     connflag=False
     delay=5
     #print("connecting ",client)
@@ -244,6 +249,8 @@ def Connect(client,broker,port,keepalive,run_forever=False):
     #####end connecting
 
 def wait_for(client,msgType,period=.25,wait_time=40,running_loop=False):
+    """Will wait for a particular event gives up after period*wait_time, Default=10
+seconds.Returns True if succesful False if fails"""
     #running loop is true when using loop_start or loop_forever
     client.running_loop=running_loop #
     wcount=0  
