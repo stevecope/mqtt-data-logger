@@ -8,8 +8,12 @@ import time,os,json,logging
 
 ###############
 class m_logger(object):
-    #def change(self,var):
-        #self.var=var
+    """Class for logging data to a file. You can set the maximim bunber
+of messages in a file the default is 1000. When the file is full
+a new file is created.Log files are store under a root directoy
+and a sub directory that uses the timestamp for the directory name
+Log file data is flushed immediately to disk so that data is not lost.
+Data can be stored as plain text or in JSON format """
     def __init__(self,log_dir="mlogs",log_recs=1000,number_logs=0):
         self.log_dir=log_dir
         self.log_recs=log_recs
@@ -36,7 +40,8 @@ class m_logger(object):
             print("closing log file")
             self.fo.close()
     def create_log_dir(self,log_dir):
-        
+    """Function for creating new log directories
+    using the timestamp for the name"""   
         self.t=time.localtime(time.time())
         
         self.time_stamp=(str(self.t[1])+"-"+str(self.t[2])+"-"+                                          
@@ -54,7 +59,7 @@ class m_logger(object):
         return(self.log_sub_dir)
 
     def get_log_name(self,log_dir,count):
-        """get log files and diretories"""
+        """get log files and directories"""
         self.log_numbr="{0:003d}".format(count)
         logging.info("s is"+str(self.log_numbr))
         self.file_name=self.log_dir+"/"+"log"+self.log_numbr
@@ -75,7 +80,7 @@ class m_logger(object):
             self.__flushlogs()
             if self.writecount>=self.log_recs:
                 self.count+=1 #counts number of logs
-                if self.count>self.number_logs:
+                if self.count>self.number_logs and self.number_logs !=0 :
                       logging.info("too many logs: starting from 0")
                       self.count=0 #reset
                 self.fo=self.get_log_name(self.log_dir,self.count)
