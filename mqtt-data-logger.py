@@ -71,10 +71,6 @@ else:
     
 #log=mlogger.m_logger()
 
-if options["username"] !="":
-    client1.username_pw_set(options["username"], options["password"])
-
-
 #Initialise_client_object() # add extra flags
 logging.info("creating client"+cname)
 Initialise_client_object()#create flags
@@ -82,6 +78,10 @@ client=Initialise_clients(cname,mqttclient_log,False)#create and initialise clie
 topics=options["topics"]
 broker=options["broker"]
 port=options["port"]
+
+if options["username"] !="":
+    client.username_pw_set(options["username"], options["password"])
+
 if options["storechangesonly"]:
     print("starting storing only changed data")
 else:
