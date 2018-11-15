@@ -4,7 +4,7 @@ This software uses the Python logger to create a logfile
 for all messages for all topics to which this MQTT client
 has subscribed.
 Note: by default it will only log changed messages. This is for sensors 
-that send out their state a regular intervals bu that state doesn't change
+that send out their state a regular intervals but that state doesn't change
 The program is run from the command line
 You can subscribe to multiple topics.
 
@@ -71,10 +71,10 @@ The class is implemented in a module called m_logger.py (message logger).
 To create an instance you need to supply three parameters:
 
     The log directory- defaults to mlogs
-    Number of records to log per log- defaults to 1000
+    Number of records to log per log- defaults to 5000
     Number of logs. 0 for no limit.- defaults to 0
 
-log=m_logger(log_dir="logs",log_recs=1000,number_logs=0):
+log=m_logger(log_dir="logs",log_recs=5000,number_logs=0):
 
 The logger creates the log files in the directory using the current date and time for the directory names.
 
@@ -89,7 +89,7 @@ To log data either in plain text then use the
 
 To log data as JSON encoded data call the
 
-    json_log(data) method.
+    log_json(data) method.
 
 Both method takes a single parameter containing the data to log as a string, list or dictionary..
 

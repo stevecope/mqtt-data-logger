@@ -1,4 +1,3 @@
-
 #!python3
 ###demo code provided by Steve Cope at www.steves-internet-guide.com
 ##email steve@steves-internet-guide.com
@@ -18,7 +17,7 @@ options["storechangesonly"]=True
 options["keepalive"]=60
 options["loglevel"]="WARNING"
 options["log_dir"]="mlogs"
-options["log_records"]=1000
+options["log_records"]=5000
 options["number_logs"]=0
 
 
