@@ -1,10 +1,14 @@
-#!python3
+#!c:\python34\python.exe
+#!/usr/bin/env python
+#If Running in Windows use top line and edit according to your python
+#location and version. If running on Linux delete the top line.
 ###demo code provided by Steve Cope at www.steves-internet-guide.com
 ##email steve@steves-internet-guide.com
 ###Free to use for any purpose
 """
 This will log messages to file.Los time,message and topic as JSON data
 """
+#updated 28-oct-2018
 mqttclient_log=False #MQTT client logs showing messages
 Log_worker_flag=True
 import paho.mqtt.client as mqtt
@@ -18,8 +22,8 @@ import threading
 from queue import Queue
 from command import command_input
 import command
-#from utilities import convert, print_out
-
+import sys
+print("Python version is", sys.version_info)
 
 q=Queue()
 
@@ -93,7 +97,7 @@ def on_connect(client, userdata, flags, rc):
             qos=client.sub_qos
          client.subscribe(topic,qos)
       elif client.sub_topics!="":
-         print("subscribing in on_connect multiple")
+         #print("subscribing in on_connect multiple")
          client.subscribe(client.sub_topics)
 
    else:
@@ -110,7 +114,13 @@ def on_message(client,userdata, msg):
 def message_handler(client,msg,topic):
     data=dict()
     tnow=time.localtime(time.time())
-    m=time.asctime(tnow)+" "+topic+" "+msg
+    #m=time.asctime(tnow)+" "+topic+" "+msg
+    try:
+        msg=json.loads(msg)#convert to Javascript before saving
+        #print("json data")
+    except:
+        pass
+        #print("not already json")
     data["time"]=tnow
     data["topic"]=topic
     data["message"]=msg
@@ -131,13 +141,16 @@ def has_changed(client,topic,msg):
     return True
 ###
 def log_worker():
-    """runs in own thread to log data"""
+    """runs in own thread to log data from queue"""
     while Log_worker_flag:
         while not q.empty():
             results = q.get()
             if results is None:
                 continue
-            log.log_json(results)
+            if options["JSON"]:
+                log.log_json(results)
+            else:
+                log.log_data(results)
             #print("message saved ",results["message"])
     log.close_file()
 
@@ -150,7 +163,6 @@ else:
     print("Need broker name and topics to continue.. exiting")
     raise SystemExit(1)
 
-#verbose=options["verbose"]
 
 if not options["cname"]:
     r=random.randrange(1,10000)
@@ -160,7 +172,7 @@ else:
 log_dir=options["log_dir"]
 log_records=options["log_records"]
 number_logs=options["number_logs"]
-log=mlogger.m_logger(log_dir,log_records,number_logs)
+log=mlogger.m_logger(log_dir,log_records,number_logs) #create log object
 print("Log Directory =",log_dir)
 print("Log records per log =",log_records)
 if number_logs==0:
@@ -168,19 +180,21 @@ if number_logs==0:
 else:
     print("Max logs  =",number_logs)
     
-#log=mlogger.m_logger()
-
-if options["username"] !="":
-    client.username_pw_set(options["username"], options["password"])
-
-
 
 logging.info("creating client"+cname)
 
 client=Initialise_clients(cname,mqttclient_log,False)#create and initialise client object
+if options["username"] !="":
+    client.username_pw_set(options["username"], options["password"])
+
 client.sub_topics=options["topics"]
 client.broker=options["broker"]
 client.port=options["port"]
+options["JSON"]=True #currently only supports JSON
+if options["JSON"]:
+    print("Logging JSON format")
+else:
+    print("Logging plain text")
 if options["storechangesonly"]:
     print("starting storing only changed data")
 else:
@@ -203,11 +217,8 @@ try:
     client.loop_start() #start loop
 
 except:
-    logging.debug("connection failed")
-    print("connection failed")
-    client.bad_count +=1
-    client.bad_connection_flag=True #old clients use this
-#loop and wait until interrupted   
+    logging.debug("connection to ",client.broker," failed")
+    raise SystemExit("connection failed")
 try:
     while True:
         pass
