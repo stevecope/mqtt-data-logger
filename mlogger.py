@@ -9,12 +9,13 @@ import time,os,json,logging
 ###############
 class m_logger(object):
     """Class for logging data to a file. You can set the maximim bunber
-of messages in a file the default is 1000. When the file is full
-a new file is created.Log files are store under a root directoy
+of messages in a file the default is 5000. Setting number_logs to 0
+means that there is no limit on the number of logs.When the file is full
+a new file is created.Log files are stored under a root directory
 and a sub directory that uses the timestamp for the directory name
 Log file data is flushed immediately to disk so that data is not lost.
 Data can be stored as plain text or in JSON format """
-    def __init__(self,log_dir="mlogs",log_recs=1000,number_logs=0):
+    def __init__(self,log_dir="mlogs",log_recs=5000,number_logs=0):
         self.log_dir=log_dir
         self.log_recs=log_recs
         self.number_logs=number_logs
@@ -40,11 +41,12 @@ Data can be stored as plain text or in JSON format """
             print("closing log file")
             self.fo.close()
     def create_log_dir(self,log_dir):
-    """Function for creating new log directories
-    using the timestamp for the name"""   
-        self.t=time.localtime(time.time())
-        
-        self.time_stamp=(str(self.t[1])+"-"+str(self.t[2])+"-"+                                          
+        """
+        Function for creating new log directories
+        using the timestamp for the name
+        """   
+        self.t=time.localtime(time.time())      
+        self.time_stamp=(str(self.t[1])+"-"+str(self.t[2])+"-"+\
         str(self.t[3])+"-"+str(self.t[4]))                                                                             
         logging.info("creating sub directory"+str(self.time_stamp))
         try:
@@ -68,7 +70,7 @@ Data can be stored as plain text or in JSON format """
         f.close()
         f=open(self.file_name, 'a')
         return(f)
-    def log_json(self,data):
+    def log_json(self,data): #data is a JavaScript object
         jdata=json.dumps(data)+"\n"
         self.log_data(jdata)                                                                                          
                                                                                          
