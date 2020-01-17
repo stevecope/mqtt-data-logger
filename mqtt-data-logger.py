@@ -143,6 +143,7 @@ def has_changed(client,topic,msg):
 def log_worker():
     """runs in own thread to log data from queue"""
     while Log_worker_flag:
+        time.sleep(0.01)
         while not q.empty():
             results = q.get()
             if results is None:
@@ -221,6 +222,7 @@ except:
     raise SystemExit("connection failed")
 try:
     while True:
+        time.sleep(1)
         pass
 
 except KeyboardInterrupt:
