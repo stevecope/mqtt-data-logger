@@ -37,6 +37,11 @@ Valid command line Options:
 	-r <number of records default=100>\
 	-f <number of log files default= unlimited"
 
+# Install dependencies
+
+You need the paho mqtt library. Using pip3:
+
+	pip install paho-mqtt
 
 # Example Usage:
 
