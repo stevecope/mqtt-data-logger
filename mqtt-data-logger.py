@@ -1,5 +1,4 @@
-#!c:\python34\python.exe
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #If Running in Windows use top line and edit according to your python
 #location and version. If running on Linux delete the top line.
 ###demo code provided by Steve Cope at www.steves-internet-guide.com
@@ -112,18 +111,25 @@ def on_message(client,userdata, msg):
     #print("message received")
     
 def message_handler(client,msg,topic):
-    data=dict()
+
     tnow=time.localtime(time.time())
-    #m=time.asctime(tnow)+" "+topic+" "+msg
-    try:
-        msg=json.loads(msg)#convert to Javascript before saving
-        #print("json data")
-    except:
-        pass
-        #print("not already json")
-    data["time"]=tnow
-    data["topic"]=topic
-    data["message"]=msg
+
+    if options["JSON"]:
+        data=dict()
+        try:
+            msg=json.loads(msg)#convert to Javascript before saving
+            #print("json data")
+        except:
+            pass
+            #print("not already json")
+        data["time"]=tnow
+        data["topic"]=topic
+        data["message"]=msg
+        #print("Logging JSON format")
+    else:
+        data=time.asctime(tnow)+" "+topic+" "+msg+"\n"
+        #print("Logging plain text")
+    
     if command.options["storechangesonly"]:
         if has_changed(client,topic,msg):
             client.q.put(data) #put messages on queue
@@ -191,7 +197,7 @@ if options["username"] !="":
 client.sub_topics=options["topics"]
 client.broker=options["broker"]
 client.port=options["port"]
-options["JSON"]=True #currently only supports JSON
+
 if options["JSON"]:
     print("Logging JSON format")
 else:
