@@ -14,6 +14,7 @@ options["verbose"]=True
 options["cname"]=""
 options["topics"]=[("",0)]
 options["storechangesonly"]=True
+options["JSON"]=False
 options["keepalive"]=60
 options["loglevel"]="WARNING"
 options["log_dir"]="mlogs"
@@ -28,10 +29,10 @@ def command_input(options={}):
     valid_options=" --help <help> -h or -b <broker> -p <port>-t <topic> -q QOS -v <verbose> -h <help>\
  -d logging debug  -n Client ID or Name -u Username -P Password -s <store all data>\
 -l <log directory default= mlogs> -r <number of records default=100>\
--f <number of log files default= unlimited"
+-f <number of log files default= unlimited -j <JSON>"
     print_options_flag=False
     try:
-      opts, args = getopt.getopt(sys.argv[1:],"h:b:sdk:p:t:q:l:vn:u:P:l:r:f:")
+      opts, args = getopt.getopt(sys.argv[1:],"h:b:sdk:p:t:q:l:vn:u:P:l:r:f:j")
     except getopt.GetoptError:
       print (sys.argv[0],valid_options)
       sys.exit(2)
@@ -68,7 +69,8 @@ def command_input(options={}):
             options["log_records"]=int(arg)
         elif opt =="-f":
             options["number_logs"]=int(arg)
-
+        elif opt =="-j":
+            options["JSON"]=True
 
     lqos=len(qos_in)
     for i in range(len(topics_in)):

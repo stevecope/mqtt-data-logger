@@ -33,6 +33,7 @@ Valid command line Options:
 -l <log directory default= mlogs> 
 -r <number of records default=100>\
 -f <number of log files default= unlimited"
+-j <JSON>	
 
 	Example Usage:
 
@@ -51,9 +52,13 @@ Specify broker and multiple topics
     python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -t  home/#
 	
 
-Log All Data:
+Log All Data (plain text format):
 
     python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -s 
+
+Log All Data (JSON format):
+
+    python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -s -j
 
 Specify the client name used by the logger
 
