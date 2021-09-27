@@ -21,21 +21,23 @@ You need to provide the script with:
 
 Valid command line Options:
 
-	--help <help>
-	-h <broker> 
-	-b <broker> 
-	-p <port>
-	-t <topic> 
-	-q <QOS>
-	-v <verbose>
-	-d logging debug 
-	-n <Client ID or Name>
-	-u Username 
-	-P Password
-	-s <store all data>\
-	-l <log directory default= mlogs> 
-	-r <number of records default=100>\
-	-f <number of log files default= unlimited"
+    --help <help>
+    -h <broker> 
+    -b <broker> 
+    -p <port>
+    -t <topic> 
+    -q <QOS>
+    -v <verbose>
+    -d logging debug 
+    -n <Client ID or Name>
+    -u Username 
+    -P Password
+    -s <store all data>\
+    -l <log directory default= mlogs> 
+    -r <number of records default=100>\
+    -f <number of log files default= unlimited"
+    -j <JSON>	
+
 
 # Install dependencies
 
@@ -60,9 +62,13 @@ Specify broker and multiple topics
     python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -t  home/#
 	
 
-Log All Data:
+Log All Data (plain text format):
 
     python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -s 
+
+Log All Data (JSON format):
+
+    python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -s -j
 
 Specify the client name used by the logger
 
