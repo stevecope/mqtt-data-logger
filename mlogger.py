@@ -46,7 +46,7 @@ Data can be stored as plain text or in JSON format """
         using the timestamp for the name
         """   
         self.t=time.localtime(time.time())      
-        self.time_stamp=(str(self.t[1])+"-"+str(self.t[2])+"-"+\
+        self.time_stamp=(str(self.t[0])+"-"+str(self.t[1])+"-"+str(self.t[2])+"-"+\
         str(self.t[3])+"-"+str(self.t[4]))                                                                             
         logging.info("creating sub directory"+str(self.time_stamp))
         try:
