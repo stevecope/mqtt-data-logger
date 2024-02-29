@@ -48,35 +48,35 @@ You will always need to specify the broker name or IP address
 and the topics to log
 
 Note: you may not need to use the python prefix or may 
-need to use python3 mqtt_data_logger.py (Linux)
+need to use python3 mqtt-data-logger.py (Linux)
 
 Specify broker and topics 
 
-    python mqtt_data_logger.py -b 192.168.1.157 -t sensors/#
+    python mqtt-data-logger.py -b 192.168.1.157 -t sensors/#
 
 Specify broker and multiple topics
 
-    python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -t  home/#
+    python mqtt-data-logger.py -b 192.168.1.157 -t sensors/# -t  home/#
 
 Log as Json
 
-    python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -j
+    python mqtt-data-logger.py -b 192.168.1.157 -t sensors/# -j
 	
 Log as CSV
 
-    python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -c
+    python mqtt-data-logger.py -b 192.168.1.157 -t sensors/# -c
 
 Log All Data:
 
-    python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -s 
+    python mqtt-data-logger.py b 192.168.1.157 -t sensors/# -s 
 
 Specify the client name used by the logger
 
-    python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -n data-logger
+    python mqtt-data-logger.py b 192.168.1.157 -t sensors/# -n data-logger
 
 Specify the log directory
 
-    python mqtt_data_logger.py b 192.168.1.157 -t sensors/# -l mylogs
+    python mqtt-data-logger.py b 192.168.1.157 -t sensors/# -l mylogs
  
 ---------
 Logger Class
