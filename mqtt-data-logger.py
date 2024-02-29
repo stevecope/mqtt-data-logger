@@ -8,7 +8,7 @@
 """
 This will log messages to file.Los time,message and topic as JSON data
 """
-#updated 28-oct-2018
+#updated 18-oct-2023
 mqttclient_log=False #MQTT client logs showing messages
 Log_worker_flag=True
 import paho.mqtt.client as mqtt
@@ -53,10 +53,10 @@ class MQTTClient(mqtt.Client):#extend the paho client class
       self.pub_msg_count=0
       self.pub_flag=False
       self.sub_topic=""
-      self.sub_topics=[] #multiple topics
+      #self.sub_topics=["tele/#","stat/#"] #multiple topics
       self.sub_qos=0
       self.devices=[]
-      self.broker=""
+      self.broker="mqtt2.home"
       self.port=1883
       self.keepalive=60
       self.run_forever=False
@@ -90,14 +90,13 @@ def on_connect(client, userdata, flags, rc):
       client.connected_flag=True #old clients use this
       client.bad_connection_flag=False
       if client.sub_topic!="": #single topic
-         logging.debug("subscribing "+str(client.sub_topic))
-         print("subscribing in on_connect")
-         topic=client.sub_topic
+         print("subscribing "+str(client.sub_topic))
+         print("subscribing in on_connect ")
+         topic=client.sub_topics
          if client.sub_qos!=0:
-            qos=client.sub_qos
-         client.subscribe(topic,qos)
+            client.subscribe(topic,qos)
       elif client.sub_topics!="":
-         #print("subscribing in on_connect multiple")
+         print("subscribing in on_connect multiple",client.sub_topics)
          client.subscribe(client.sub_topics)
 
    else:
@@ -113,7 +112,7 @@ def on_message(client,userdata, msg):
     
 def message_handler(client,msg,topic):
     data=dict()
-    tnow=time.localtime(time.time())
+    tnow=time.ctime()
     #m=time.asctime(tnow)+" "+topic+" "+msg
     try:
         msg=json.loads(msg)#convert to Javascript before saving
@@ -121,9 +120,21 @@ def message_handler(client,msg,topic):
     except:
         pass
         #print("not already json")
+
     data["time"]=tnow
+    data["time_ms"]=time.time()
     data["topic"]=topic
-    data["message"]=msg
+    if csv_flag:
+        try:
+            keys=msg.keys()
+            for key in keys:
+                data[key]=msg[key]
+        except:
+            data["message"]=msg 
+    else:             
+        data["message"]=msg
+    
+    #data["message"]=msg
     if command.options["storechangesonly"]:
         if has_changed(client,topic,msg):
             client.q.put(data) #put messages on queue
@@ -148,10 +159,13 @@ def log_worker():
             results = q.get()
             if results is None:
                 continue
-            if options["JSON"]:
-                log.log_json(results)
+ 
+            if csv_flag:
+                log.log_csv(results)
             else:
-                log.log_data(results)
+                log.log_json(results)
+  
+            
             #print("message saved ",results["message"])
     log.close_file()
 
@@ -162,7 +176,7 @@ if __name__ == "__main__" and len(sys.argv)>=2:
     options=command_input(options)
 else:
     print("Need broker name and topics to continue.. exiting")
-    raise SystemExit(1)
+    #raise SystemExit(1)
 
 
 if not options["cname"]:
@@ -191,18 +205,26 @@ if options["username"] !="":
 client.sub_topics=options["topics"]
 client.broker=options["broker"]
 client.port=options["port"]
-options["JSON"]=True #currently only supports JSON
+json_flag=False
+csv_flag=False
+
 if options["JSON"]:
     print("Logging JSON format")
-else:
-    print("Logging plain text")
+    json_flag=True
+#note for csv data logging input data must be in json format
+if options["CSV"]:
+    csv_flag=True
+    print("Logging CSV format")
+if options["CSV"]==False and options["JSON"]==False:
+    print("logging plain data")
 if options["storechangesonly"]:
     print("starting storing only changed data")
-else:
+else :
     print("starting storing all data")
     
 ##
 #Log_worker_flag=True
+
 t = threading.Thread(target=log_worker) #start logger
 t.start() #start logging thread
 ###
@@ -211,15 +233,17 @@ client.last_message=dict()
 client.q=q #make queue available as part of client
 
 
-
+print("topics",options["topics"])
 
 try:
     res=client.connect(client.broker,client.port)      #connect to broker
     client.loop_start() #start loop
 
 except:
+    print("connection to ",client.broker," failed")
     logging.debug("connection to ",client.broker," failed")
     raise SystemExit("connection failed")
+print("connected")
 try:
     while True:
         time.sleep(1)
@@ -227,7 +251,7 @@ try:
 
 except KeyboardInterrupt:
     print("interrrupted by keyboard")
-
+print("end")
 client.loop_stop() #start loop
 Log_worker_flag=False #stop logging thread
 time.sleep(5)
