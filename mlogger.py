@@ -8,14 +8,14 @@ import time,os,json,logging
 
 ###############
 class m_logger(object):
-    """Class for logging data to a file. You can set the maximim bunber
+    """Class for logging data to a file. You can set the maximim number
 of messages in a file the default is 5000. Setting number_logs to 0
 means that there is no limit on the number of logs.When the file is full
 a new file is created.Log files are stored under a root directory
 and a sub directory that uses the timestamp for the directory name
 Log file data is flushed immediately to disk so that data is not lost.
 Data can be stored as plain text or in JSON format """
-    def __init__(self,log_dir="mlogs",log_recs=5000,number_logs=0):
+    def __init__(self,log_dir="mlogs",log_recs=5000,number_logs=0,csv_flag=False):
         self.log_dir=log_dir
         self.log_recs=log_recs
         self.number_logs=number_logs
@@ -27,6 +27,31 @@ Data can be stored as plain text or in JSON format """
         self.timenow=time.time()
         self.flush_flag=True
         self.flush_time=2 #flush logs to disk every 2 seconds
+        self.csv_flag = csv_flag
+        self.columns=""
+
+    def extract_columns(self,data):
+        columns=""
+
+        #data=flatten_dict(msg)
+        for key in data:
+            #print("key =",key)
+            if columns =="":
+                columns=key
+            else:
+                columns=columns+","+key
+        #print(columns)
+        return(columns)
+    def extract_data(self,data):
+        line_out=""
+        for key in data:
+            #print("here ",data[key])
+            if line_out =="":
+                line_out=str(data[key])
+            else:
+                line_out=line_out+","+str(data[key])
+        #print(line_out)
+        return(line_out)
     def __flushlogs(self): # write to disk 
         self.fo.flush()
         #logging.info("flushing logs")
@@ -64,7 +89,7 @@ Data can be stored as plain text or in JSON format """
         """get log files and directories"""
         self.log_numbr="{0:003d}".format(count)
         logging.info("s is"+str(self.log_numbr))
-        self.file_name=self.log_dir+"/"+"log"+self.log_numbr
+        self.file_name=self.log_dir+"/"+"log"+self.log_numbr +".log"
         logging.info("creating log file "+self.file_name)
         f = open(self.file_name,'w') #clears file if it exists
         f.close()
@@ -73,8 +98,17 @@ Data can be stored as plain text or in JSON format """
     def log_json(self,data): #data is a JavaScript object
         jdata=json.dumps(data)+"\n"
         self.log_data(jdata)                                                                                          
-                                                                                         
+    def log_csv(self,data): #data is a JavaScript object that needs converting
+        #print("logging csv ",self.writecount)
+        if self.writecount==0:
+            self.columns=self.extract_columns(data)+"\n"
+            csv_flag=True
+            self.log_data(self.columns)
+        else:
+            csv_data=self.extract_data(data)+"\n"
+            self.log_data(csv_data)
     def log_data(self, data):
+        #print("logging data")
         self.data=data
         try:
             self.fo.write(data)

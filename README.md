@@ -33,7 +33,15 @@ Valid command line Options:
 -l <log directory default= mlogs> 
 -r <number of records default=100>\
 -f <number of log files default= unlimited"
+-c <log csv format>
+-j <log json format>
 
+The logger will log data as JSON or csv using the -j or -c flags.
+Incoming data can be plain text or json formatted data.
+currnetly the json data cannot contain nested elements.
+When storing logs as csv the headers are automatically extraced from the json keys is the data is json formated.
+If the incoming data is in csv format it will be logged as plain text.
+	
 	Example Usage:
 
 You will always need to specify the broker name or IP address 
@@ -49,7 +57,14 @@ Specify broker and topics
 Specify broker and multiple topics
 
     python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -t  home/#
+
+Log as Json
+
+    python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -j
 	
+Log as CSV
+
+    python mqtt_data_logger.py -b 192.168.1.157 -t sensors/# -c
 
 Log All Data:
 
@@ -100,7 +115,7 @@ or
 log.log_json(data)
 
 #The log file will contain the data as 
-#plain text or  JSON encoded data strings
+#plain text or  JSON encoded data strings or csv
 #each on a newline.
 
 The logger will return True if successful and False if not.
